@@ -6,6 +6,8 @@
  * are purely to provide a base level of functionality.
  */
 
+namespace Scripts\Database;
+
 class Activity
 {
     /**
@@ -16,7 +18,7 @@ class Activity
     public const USER_ACTION = 1;
 
 
-    public function __construct($orgId)
+    public function __construct($orgID)
     {
         // N/A
     }
@@ -29,7 +31,7 @@ class Activity
      * @param string $activity Brief description
      * @return void
      */
-    public function insert($userId, $activityId, $activity)
+    public function insert($userID, $activityID, $activity)
     {
         return;
     }

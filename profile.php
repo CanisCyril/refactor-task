@@ -1,7 +1,12 @@
 <?php
-session_start();
-$_SESSION['org_id'] = 1;
-$_SESSION['user_id'] = 2;
+
+$arr = [
+    $_SESSION['orgID'] = 1,
+    $_SESSION['userID'] = 2
+];
+
+session_start($arr);
+
 ?>
 
 <head>
@@ -27,31 +32,30 @@ $_SESSION['user_id'] = 2;
             <form method="post" action="process.php">
                 <div class="form-group">
                     <label for="name">Name</label>
-                    <input type="text" name="name" value="User Name" class="form-control" autocomplete="off">
+                    <input type="text" name="name" placeholder="User Name" class="form-control" autocomplete="off">
                 </div>
                 <button type="submit" name="action" value="name" class="btn btn-primary">Save</button>
                 <hr>
                 <div class="form-group">
                     <label for="name">Email</label>
-                    <input type="text" name="email" value="email@address.com" class="form-control" autocomplete="off">
+                    <input type="text" name="email" placeholder="email@address.com" class="form-control" autocomplete="off">
                 </div>
                 <button type="submit" name="action" value="email" class="btn btn-primary">Save</button>
                 <hr>
 
                 <div class="form-group">
                     <label for="password1">Password</label>
-                    <input type="password" name="password1" value="" class="form-control" autocomplete="new-password">
+                    <input type="password" name="password1" placeholder="Type Password" class="form-control" autocomplete="new-password">
                 </div>
                 <div class="form-group">
                     <label for="password2">Repeat Password</label>
-                    <input type="password" name="password2" value="" class="form-control" autocomplete="new-password">
+                    <input type="password" name="password2" placeholder="Confirm Password" class="form-control" autocomplete="new-password">
                 </div>
                 <button type="submit" name="action" value="password" class="btn btn-primary">Save</button>
             </form>
         </div>
     </main>
 </body>
-</html>
 
 <?php
 unset($_SESSION['error']);

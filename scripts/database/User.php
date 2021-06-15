@@ -5,10 +5,11 @@
  * You can modify it as you see fit but the methods
  * are purely to provide a base level of functionality.
  */
+namespace Scripts\Database;
 
 class User
 {
-    public function __construct($org_id, $user_id)
+    public function __construct($orgID, $userID)
     {
         // N/A
     }

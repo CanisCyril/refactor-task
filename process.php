@@ -1,7 +1,6 @@
 <?php
-session_start();
-$orgId = $_SESSION['org_id'];
-$user_id = $_SESSION['user_id'];
+
+session_start(['org_id', 'user_id']);
 
 function getInput($field) {
     if (isset($_POST[$field])) {
@@ -16,8 +15,14 @@ function redirect($address) {
     header('Location: ' . $base . DIRECTORY_SEPARATOR . $address . '.php');
 }
 
+use Scripts\Database\User;
+use Scripts\Database\Activity;
+
 require_once 'scripts/database/User.php';
-$User = new User($orgId, $user_id);
+require_once 'scripts/database/Activity.php';
+
+$user = new User($orgID, $userID);
+$activity = new Activity($orgID);
 
 // Submit button was clicked
 if (!empty($_POST)) {
@@ -33,17 +38,16 @@ if (!empty($_POST)) {
 
                 $names = explode(' ', $names, 2);
 
-                if (count($names) < 2) {
+                if (count($names) < 2 || empty($names)) {
                     $error[] = 'Please provide a first and last name.';
                 }
 
                 if (empty($error)) {
                     // returns true on success, false on failure
-                    if ($User->updateNames($names)) {
-                        require_once 'scripts/database/Activity.php';
-                        $Activity = new Activity($orgId);
-                        $Activity->insert($user_id, Activity::USER_ACTION, "Updated Names");
-                        unset($Activity);
+                    if ($user->updateNames($names)) {
+
+                        $activity->insert($userID, Activity::USER_ACTION, "Updated Names");
+                        unset($activity);
 
                         $success[] = "Your profile was successfully updated";
                     } else {
@@ -51,7 +55,6 @@ if (!empty($_POST)) {
                     }
                 }
                 break;
-
             case 'email':
                 $email = trim(getInput('email'));
 
@@ -63,7 +66,7 @@ if (!empty($_POST)) {
                         $error[] = 'Please provide a valid email!';
                     } else {
                         // returns email address if found, or false if not found
-                        $exists = $User->checkEmailExistence($email);
+                        $exists = $user->checkEmailExistence($email);
 
                         if (!empty($exists)) {
                             $error[] = "Email already in use. Please enter a different email and try again.";
@@ -73,19 +76,15 @@ if (!empty($_POST)) {
 
                 if (empty($error)) {
                     // returns true on success, false on failure
-                    if ($User->updateEmail($email)) {
-
-                        require_once 'scripts/database/Activity.php';
-                        $Activity = new Activity($orgId);
-                        $Activity->insert($user_id, Activity::USER_ACTION, "Updated email address");
-                        unset($Activity);
+                    if ($user->updateEmail($email)) {
+                        $activity->insert($userID, Activity::USER_ACTION, "Updated email address");
+                        unset($activity);
 
                         $success[] = "Your profile was successfully updated";
                     } else {
                         $error[] = "It was not possible to update your profile at present time.";
                     }
                 }
-
                 break;
 
             case 'password':
@@ -98,11 +97,10 @@ if (!empty($_POST)) {
 
                 if (empty($error)) {
                     // returns true on success, false on failure
-                    if ($User->updatePassword($pw1)) {
-                        require_once 'scripts/database/Activity.php';
-                        $Activity = new Activity($orgId);
-                        $Activity->insert($user_id, Activity::USER_ACTION, "Updated password");
-                        unset($Activity);
+                    if ($user->updatePassword($pw1)) {
+
+                        $activity->insert($userID, Activity::USER_ACTION, "Updated password");
+                        unset($activity);
 
                         $success[] = "Your profile was successfully updated";
                     } else {
@@ -124,9 +122,9 @@ if (!empty($success)) {
 
         switch ($_POST['action']) {
             case 'name':
-                $_SESSION['fname'] = $first_name = $names[0];
-                $_SESSION['lname'] = $lastName = $names[1];
-                $_SESSION['realname'] = $realname = ($first_name . " " . $lastName);
+                $_SESSION['fName'] = $firstName = $names[0];
+                $_SESSION['lName'] = $lastName = $names[1];
+                $_SESSION['realName'] = $realName = ($firstName . " " . $lastName);
                 $_SESSION['success'] = implode('<br>', $success);
                 redirect('profile');
                 break;
